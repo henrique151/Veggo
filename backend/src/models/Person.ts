@@ -60,7 +60,6 @@ Person.init({
     }
 }, {
     sequelize,
-
     tableName: 'persons',
     timestamps: false
 });

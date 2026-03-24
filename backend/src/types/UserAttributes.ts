@@ -2,7 +2,6 @@ export interface UserAttributes {
     id: number;
     email: string;
     password: string;
-    type: string;
     lastLogin: Date;
     isBlocked: boolean;
     isAdmin: boolean;

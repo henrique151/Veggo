@@ -11,7 +11,7 @@ Este diretório contém o core do projeto Vaggo, uma API RESTful desenvolvida co
 - **Segurança**: Bcrypt (Hash) & JWT (Autenticação)
 - **Validação**: Zod
 - **Observabilidade**: Winston (Logging)
-- **Infraestrutura**: Docker (🚧 em progresso)
+- **Infraestrutura**: Docker ✅
 
 ---
 
@@ -30,13 +30,13 @@ backend/
  ┃ ┣ models/        # Definição das entidades do banco de dados
  ┃ ┣ routes/        # Definição dos endpoints e mapeamento de rotas
  ┃ ┣ schemas/       # Contratos de validação de dados (Zod)
+ ┃ ┣ services/      # Lógica de negócios da aplicação
  ┃ ┣ types/         # Definições de tipos e interfaces TypeScript
  ┃ ┣ utils/         # Helpers, Loggers (Winston) e Wrappers (asyncHandler)
  ┃ ┗ server.ts      # Entry point da aplicação
  ┣ .env             # Variáveis sensíveis (não commitado)
- ┣ Dockerfile       # Configuração de container (🚧 em progresso)
+ ┣ Dockerfile       # Configuração de container
  ┗ package.json     # Scripts e dependências
-
 ```
 
 ---
@@ -45,47 +45,91 @@ backend/
 
 ### ✅ Implementado:
 
-- [x] Criação de usuário com hash de senha seguro.
+**Usuários**
+
+- [x] Criação de usuário com validação completa (Zod v4) e hash de senha seguro (bcrypt).
 - [x] Autenticação com Token JWT (incluindo tempo de expiração).
-- [x] Listagem global de usuários com proteção de dados sensíveis.
-- [x] Remoção de usuários protegida por middleware de autenticação.
-- [x] Sistema de log profissional e tratamento de erros centralizado.
+- [x] Listagem global de usuários com exclusão de dados sensíveis (senha).
+- [x] Consulta de usuário por ID com dados relacionados (Person).
+- [x] Atualização parcial de dados cadastrais com validação de ownership.
+- [x] Remoção de usuário com deleção em cascata (User + Person) via transaction.
+- [x] Verificação de duplicidade de CPF e e-mail antes do insert (409 Conflict).
+- [x] Sistema de log profissional (Winston) e tratamento de erros centralizado.
+- [x] Infraestrutura Docker finalizada (Dockerfile + docker-compose).
 
 ### 🚧 Próximas Etapas (Backlog):
 
-- [ ] Endpoint `GET /users/:id` (Consulta detalhada de perfil).
-- [ ] Endpoint `PUT /users/:id` (Atualização de dados cadastrais).
-- [ ] Finalização da orquestração Docker (Dockerfile e docker-compose).
+**Veículos**
+
+- [ ] Endpoint `POST /vehicles` — Cadastro de veículo vinculado ao usuário autenticado.
+- [ ] Endpoint `GET /vehicles` — Listagem de todos os veículos.
+- [ ] Endpoint `GET /vehicles/:id` — Consulta detalhada de um veículo.
+- [ ] Endpoint `PUT /vehicles/:id` — Atualização de dados do veículo.
+- [ ] Endpoint `DELETE /vehicles/:id` — Remoção de veículo.
+- [ ] Validação de placa duplicada (`LICENSE_PLATE_ALREADY_EXISTS` → 409).
+- [ ] Schema Zod para veículos (`createVehicleSchema`, `updateVehicleSchema`).
 
 ---
 
 ## 🛠️ Endpoints da API
 
+### Usuários `/users`
+
 | Método     | Endpoint       | Descrição                      | Autenticação     |
 | ---------- | -------------- | ------------------------------ | ---------------- |
 | **POST**   | `/users`       | Cria um novo usuário           | Não              |
 | **POST**   | `/users/login` | Login com retorno de Token JWT | Não              |
-| **GET**    | `/users`       | Lista todos os usuários        | Não              |
-| **GET**    | `/users/:id`   | Consulta um único usuário      | **🚧 Backlog**   |
-| **PUT**    | `/users/:id`   | Atualiza dados do usuário      | **🚧 Backlog**   |
+| **GET**    | `/users`       | Lista todos os usuários        | **Sim (Bearer)** |
+| **GET**    | `/users/:id`   | Consulta um único usuário      | **Sim (Bearer)** |
+| **PUT**    | `/users/:id`   | Atualiza dados do usuário      | **Sim (Bearer)** |
 | **DELETE** | `/users/:id`   | Remove um usuário              | **Sim (Bearer)** |
+
+### Veículos `/vehicles` 🚧
+
+| Método     | Endpoint        | Descrição                 | Autenticação     |
+| ---------- | --------------- | ------------------------- | ---------------- |
+| **POST**   | `/vehicles`     | Cadastra um veículo       | **Sim (Bearer)** |
+| **GET**    | `/vehicles`     | Lista todos os veículos   | **Sim (Bearer)** |
+| **GET**    | `/vehicles/:id` | Consulta um único veículo | **Sim (Bearer)** |
+| **PUT**    | `/vehicles/:id` | Atualiza dados do veículo | **Sim (Bearer)** |
+| **DELETE** | `/vehicles/:id` | Remove um veículo         | **Sim (Bearer)** |
 
 ---
 
-## 🚀 Como Rodar o Projeto Localmente
+## 🚀 Como Rodar o Projeto
 
-### 1. Pré-requisitos
+### Pré-requisitos
 
-- Node.js (v18+)
-- Instância PostgreSQL (Local ou Supabase)
+- Docker & Docker Compose
 
-### 2. Configuração
+### Subir o ambiente
+
+```bash
+# Constrói as imagens e sobe os containers (API + banco)
+docker-compose up --build
+
+# Rodar em background
+docker-compose up -d
+
+# Rodar as migrations dentro do container
+docker exec -it vaggo_api npx sequelize-cli db:migrate --migrations-path src/database/migrations
+```
+
+### Comandos úteis Docker
+
+```bash
+docker-compose down          # Para e remove containers e redes
+docker-compose stop          # Apenas para os containers
+docker-compose logs -f       # Logs em tempo real
+docker ps                    # Containers rodando
+docker ps -a                 # Todos os containers (incluindo parados)
+```
+
+### Rodar localmente (sem Docker)
 
 ```bash
 # Clone o repositório
 git clone https://github.com/henrique151/Vaggo.git
-
-# Acesse a pasta
 cd backend
 
 # Instale as dependências
@@ -93,45 +137,16 @@ npm install
 
 # Configure o ambiente
 cp .env.example .env
+# Edite o .env com suas credenciais do banco e JWT_SECRET
 
-```
-
-> **Atenção:** Edite o arquivo `.env` com suas credenciais do banco e uma `JWT_SECRET` segura.
-
-### 3. Migrations e Execução
-
-```bash
-# Sincronize o banco de dados
+# Sincronize o banco
 npx sequelize-cli db:migrate
+
+# Deleta o banco
+npx sequelize-cli db:drop
 
 # Inicie em modo desenvolvimento
 npm run dev
-
-```
-
-```bash
-docker-compose up --build: Constrói e liga. Ele compila seu código (TypeScript → JS), cria as imagens e sobe o banco e a API juntos.
-
-docker-compose down: Desliga e limpa. Para os containers e remove as redes criadas. Útil para resetar erros.
-
-docker-compose up --build: Reconstrói as imagens (usa quando alterar o Dockerfile ou package.json) e sobe tudo.
-
-docker ps: Status. Mostra se os containers estão rodando (Up) ou se caíram (Exited).
-
-docker-compose stop: Para os containers, mas mantém os recursos criados.
-
-docker-compose down: Para tudo e remove os containers e redes (limpeza total).
-
-docker-compose logs -f: Mostra os logs em tempo real (útil se você usou o -d).
-
-docker ps: Lista os containers que estão rodando agora.
-
-docker ps -a: Lista todos os containers (até os que deram erro ou pararam).
-
-npx sequelize-cli migration:generate --name nome-da-migration: Gerar nova migration: Cria um arquivo base na pasta migrations.
-
-docker exec -it Vaggo_api npx sequelize-cli db:migrate --migrations-path src/database/migrations:
-
 ```
 
 ---
@@ -148,10 +163,8 @@ Seguimos o padrão **Git Flow** para organização:
 
 ## 📝 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](https://www.google.com/search?q=LICENSE) para mais detalhes.
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ---
 
-**Desenvolvido por [Henrique]** _Conecte-se comigo no [LinkedIn_](https://www.google.com/search?q=https://www.linkedin.com/in/seu-perfil/)
-
----
+**Desenvolvido por [Henrique](https://github.com/henrique151)**

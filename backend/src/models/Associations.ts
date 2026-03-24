@@ -1,7 +1,7 @@
 import State from "./State";
 import City from "./City";
 import Address from "./Address";
-import Person from "./Person"; 
+import Person from "./Person";
 import User from "./User";
 import Vehicle from "./Vehicle";
 import Property from "./Property";
@@ -13,15 +13,15 @@ import Report from "./Report";
 
 const setupAssociantos = () => {
     // 1. Location Relationship (State -> City -> Address)
-    State.hasMany(City, { foreignKey: 'stateId', as: 'cities' });
-    City.belongsTo(State, { foreignKey: 'stateId', as: 'state' });
+    State.hasMany(City, { foreignKey: 'EST_INT_ID', as: 'cities' });
+    City.belongsTo(State, { foreignKey: 'EST_INT_ID', as: 'state' });
 
     City.hasMany(Address, { foreignKey: 'CID_INT_ID', as: 'addresses' });
     Address.belongsTo(City, { foreignKey: 'CID_INT_ID', as: 'city' });
 
     // 2. Person and User (1:1 Relationship)
-    Person.hasOne(User, { foreignKey: 'PES_INT_ID', as: 'user' });
     User.belongsTo(Person, { foreignKey: 'PES_INT_ID', as: 'person' });
+    Person.hasOne(User, { foreignKey: 'PES_INT_ID', as: 'user' });
 
     // 3. Property and Address (1:N)
     Address.hasMany(Property, { foreignKey: 'END_INT_ID', as: 'properties' });

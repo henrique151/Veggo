@@ -7,7 +7,6 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public id!: number;
     public email!: string;
     public password!: string;
-    public type!: string;
     public lastLogin!: Date;
     public isBlocked!: boolean;
     public isAdmin!: boolean;
@@ -31,11 +30,6 @@ User.init({
         type: DataTypes.STRING(70),
         allowNull: false,
         field: 'USU_STR_SENHA'
-    },
-    type: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
-        field: 'USU_STR_TIPO'
     },
     lastLogin: {
         type: DataTypes.DATE,

@@ -35,7 +35,7 @@ PropertyUser.init({
     }
 }, {
     sequelize,
-    tableName: 'property_users',
+    tableName: 'properties_users',
     timestamps: false
 });
 

@@ -41,58 +41,12 @@ backend/
 
 ---
 
-## 📌 Status do Desenvolvimento
-
-### ✅ Implementado:
-
-**Usuários**
-
-- [x] Criação de usuário com validação completa (Zod v4) e hash de senha seguro (bcrypt).
-- [x] Autenticação com Token JWT (incluindo tempo de expiração).
-- [x] Listagem global de usuários com exclusão de dados sensíveis (senha).
-- [x] Consulta de usuário por ID com dados relacionados (Person).
-- [x] Atualização parcial de dados cadastrais com validação de ownership.
-- [x] Remoção de usuário com deleção em cascata (User + Person) via transaction.
-- [x] Verificação de duplicidade de CPF e e-mail antes do insert (409 Conflict).
-- [x] Sistema de log profissional (Winston) e tratamento de erros centralizado.
-- [x] Infraestrutura Docker finalizada (Dockerfile + docker-compose).
-
-**Veículos**
-
-- [x] Endpoint `POST /vehicles` — Cadastro de veículo vinculado ao usuário autenticado.
-- [x] Endpoint `GET /vehicles` — Listagem de todos os veículos.
-- [x] Endpoint `GET /vehicles/my-vehicles` — Consulta vários veículos do usuário
-- [x] Endpoint `GET /vehicles/:userId/:id` — Consulta detalhada de um veículo.
-- [x] Endpoint `PUT /vehicles/:id` — Atualização de dados do veículo.
-- [x] Endpoint `DELETE /vehicles/:id` — Remoção de veículo.
-- [x] Validação de placa duplicada (`LICENSE_PLATE_ALREADY_EXISTS` → 409).
-- [x] Schema Zod para veículos (`createVehicleSchema`, `updateVehicleSchema`).
-
-### 🚧 Próximas Etapas (Backlog):
-
-#### Propriedades `/properties`
-
-| Método   | Endpoint          | Descrição                            | Autenticação |
-| :------- | :---------------- | :----------------------------------- | :----------- |
-| **POST** | `/properties`     | Cadastra um novo estacionamento      | **Admin**    |
-| **GET**  | `/properties`     | Lista todos os estacionamentos       | **Sim**      |
-| **GET**  | `/properties/:id` | Detalhes da propriedade e suas vagas | **Sim**      |
-| **PUT**  | `/properties/:id` | Atualiza dados (Endereço, Nome, etc) | **Dono**     |
-
-#### Vagas `/spots`
-
-| Método    | Endpoint                    | Descrição                                   | Autenticação     |
-| :-------- | :-------------------------- | :------------------------------------------ | :--------------- |
-| **POST**  | `/properties/:propId/spots` | Gera vagas para uma propriedade             | **Dono/Gerente** |
-| **GET**   | `/properties/:propId/spots` | Lista vagas de um estacionamento específico | **Sim**          |
-| **PATCH** | `/spots/:id/status`         | Altera status da vaga (Ocupar/Liberar)      | **Funcionário**  |
-
 ## 🛠️ Endpoints da API
 
 ### Usuários `/users`
 
 | Método     | Endpoint       | Descrição                      | Autenticação     |
-| ---------- | -------------- | ------------------------------ | ---------------- |
+| :--------- | :------------- | :----------------------------- | :--------------- |
 | **POST**   | `/users`       | Cria um novo usuário           | Não              |
 | **POST**   | `/users/login` | Login com retorno de Token JWT | Não              |
 | **GET**    | `/users`       | Lista todos os usuários        | **Sim (Bearer)** |
@@ -103,13 +57,67 @@ backend/
 ### Veículos `/vehicles`
 
 | Método     | Endpoint                | Descrição                           | Autenticação     |
-| ---------- | ----------------------- | ----------------------------------- | ---------------- |
+| :--------- | :---------------------- | :---------------------------------- | :--------------- |
 | **POST**   | `/vehicles`             | Cadastra um veículo                 | **Sim (Bearer)** |
 | **GET**    | `/vehicles`             | Lista todos os veículos             | **Sim (Bearer)** |
-| **GET**    | `/vehicles/my-vehicles` | Consulta vários veículos do usuário | **Sim (Bearer)** |
+| **GET**    | `/vehicles/my-vehicles` | Consulta veículos do usuário        | **Sim (Bearer)** |
 | **GET**    | `/vehicles/:userId/:id` | Consulta um único veículo           | **Sim (Bearer)** |
 | **PUT**    | `/vehicles/:id`         | Atualiza dados do veículo           | **Sim (Bearer)** |
 | **DELETE** | `/vehicles/:id`         | Remove um veículo                   | **Sim (Bearer)** |
+
+### Localização
+
+| Método  | Endpoint             | Descrição                  | Autenticação |
+| :------ | :------------------- | :------------------------- | :----------- |
+| **GET** | `/states`            | Lista todos os estados     | Não          |
+| **GET** | `/states/:id/cities` | Lista cidades de um estado | Não          |
+
+### Propriedades `/properties`
+
+| Método     | Endpoint                    | Descrição                                    | Autenticação     |
+| :--------- | :-------------------------- | :------------------------------------------- | :--------------- |
+| **POST**   | `/properties`               | Cadastra um novo estacionamento              | **Sim (Bearer)** |
+| **GET**    | `/properties`               | Lista todos os estacionamentos               | **Sim (Bearer)** |
+| **GET**    | `/properties/my-properties` | Lista estacionamentos do usuário autenticado | **Sim (Bearer)** |
+| **GET**    | `/properties/:id`           | Detalhes da propriedade (somente as suas)    | **Sim (Bearer)** |
+| **PUT**    | `/properties/:id`           | Atualiza dados (endereço, nome, etc)         | **Dono**         |
+| **DELETE** | `/properties/:id`           | Remove uma propriedade                       | **Dono**         |
+
+### Vagas `/spots`
+
+| Método    | Endpoint                    | Descrição                                   | Autenticação     |
+| :-------- | :-------------------------- | :------------------------------------------ | :--------------- |
+| **POST**  | `/properties/:propId/spots` | Gera vagas para uma propriedade             | **Dono**         |
+| **GET**   | `/properties/:propId/spots` | Lista vagas de um estacionamento específico | **Sim (Bearer)** |
+| **PATCH** | `/spots/:id/status`         | Altera status da vaga (Ocupar/Liberar)      | **Sim (Bearer)** |
+
+---
+
+## 📌 Próximas Etapas (Backlog)
+
+### Reservas `/reservations`
+
+| Método    | Endpoint                   | Descrição                 | Autenticação     |
+| :-------- | :------------------------- | :------------------------ | :--------------- |
+| **POST**  | `/reservations`            | Reserva uma vaga          | **Sim (Bearer)** |
+| **GET**   | `/reservations`            | Lista reservas do usuário | **Sim (Bearer)** |
+| **GET**   | `/reservations/:id`        | Detalhe da reserva        | **Sim (Bearer)** |
+| **PATCH** | `/reservations/:id/cancel` | Cancela uma reserva       | **Sim (Bearer)** |
+
+### Avaliações `/reviews`
+
+| Método     | Endpoint                  | Descrição                       | Autenticação     |
+| :--------- | :------------------------ | :------------------------------ | :--------------- |
+| **POST**   | `/properties/:id/reviews` | Avalia um estacionamento        | **Sim (Bearer)** |
+| **GET**    | `/properties/:id/reviews` | Lista avaliações da propriedade | **Sim (Bearer)** |
+| **DELETE** | `/reviews/:id`            | Remove avaliação própria        | **Sim (Bearer)** |
+
+### Denúncias `/reports`
+
+| Método   | Endpoint                  | Descrição                | Autenticação     |
+| :------- | :------------------------ | :----------------------- | :--------------- |
+| **POST** | `/properties/:id/reports` | Denuncia uma propriedade | **Sim (Bearer)** |
+| **GET**  | `/reports`                | Lista denúncias          | **Admin**        |
 
 ---
 
@@ -168,14 +176,15 @@ npx sequelize-cli db:migrate
 # Deleta o banco
 npx sequelize-cli db:drop
 
-# Para rodar o seeder
+# Rodar o seed
 npx sequelize-cli db:seed:all
 
 # Gera o arquivo de seed
 npx sequelize-cli seed:generate --name seed-states-cities
 
-# Resetar o Banco:
+# Resetar o banco
 npx sequelize-cli db:migrate:undo:all
+
 # Inicie em modo desenvolvimento
 npm run dev
 ```
@@ -184,48 +193,28 @@ npm run dev
 
 ## 🌿 Fluxo de Contribuição
 
-Seguimos o padrão **Git Flow** para organização:
-
-1. **Branch**: `git checkout -b feat/nome-da-feature`
-2. **Commit**: Siga o [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `refactor:`)
-3. **PR**: Abra um Pull Request detalhando as mudanças para revisão.
-
 Seguimos o padrão **Git Flow Avançado** para organização:
 
-main: O código que está "em produção" (perfeito, sem erros).
+- `main` — código em produção (estável, sem erros)
+- `develop` — integração das features antes de ir para a main
+- `feature/nome-da-tarefa` — onde o desenvolvimento acontece no dia a dia
 
-develop: O código onde as funcionalidades se encontram antes de irem para a main.
-
-feature/nome-da-tarefa: Onde você trabalha no dia a dia.
-
-1. **Passo a Passo para você fazer agora**:
-   Sair da main e ir para a develop (se ainda não tiver):
+### Passo a passo
 
 ```bash
-git checkout -b develop
-```
+# 1. Criar a branch da feature a partir da develop
+git checkout develop
+git checkout -b feature/nome-da-feature
 
-2. **Criar a branch da sua tarefa (Feature)**:
-
-```bash
-git checkout -b feature/refactor-user-service
-```
-
-3. **Salvar suas alterações**:
-
-```bash
+# 2. Salvar as alterações
 git add .
-git commit -m "feat(service): implement full UserService and refactor controllers"
+git commit -m "feat(scope): descrição da mudança"
+
+# 3. Enviar para o GitHub
+git push origin feature/nome-da-feature
 ```
 
-4. **Enviar para o GitHub**:
-   git push origin feature/refactor-user-service
-
-5. **Abrir o PR**:
-   No site do GitHub, você vai ver um botão "Compare & Pull Request". Você deve pedir para unir a sua feature/refactor-user-service DENTRO da develop.
-
-6. **Finalizar**:
-   Após você mesmo aprovar, você faz o "Merge". No final do semestre, você faz um PR da develop para a main para entregar a "Versão Final".
+> No GitHub, abra um Pull Request de `feature/nome-da-feature` → `develop`. Ao final do semestre, abre-se um PR de `develop` → `main` para a entrega final.
 
 ---
 

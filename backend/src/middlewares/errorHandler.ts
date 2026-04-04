@@ -9,12 +9,17 @@ const BUSINESS_ERRORS: Record<string, number> = {
     USER_NOT_FOUND: 404,
     VEHICLE_NOT_FOUND: 404,
     STATE_NOT_FOUND: 404,
+    CITY_NOT_FOUND: 404,
+    PROPERTY_NOT_FOUND: 404,
+    SPOT_NOT_FOUND: 404,
     CPF_ALREADY_EXISTS: 409,
     EMAIL_ALREADY_EXISTS: 409,
     STATE_ALREADY_EXISTS: 409,
     LICENSE_PLATE_ALREADY_EXISTS: 409,
     USER_ALREADY_MEMBER: 409,
-    SPOT_ALREADY_EXISTS: 409
+    SPOT_ALREADY_EXISTS: 409,
+    EXTERNAL_API_FAILURE: 409,
+
 };
 
 export const errorHandler = (err: any, req: Request, res: Response, _next: NextFunction) => {
@@ -34,13 +39,17 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
         PROPERTY_ACCESS_DENIED: 'Você não tem vínculo com a propriedade',
         USER_NOT_FOUND: 'Usuário não encontrado.',
         STATE_NOT_FOUND: 'Estado não encontrado',
+        CITY_NOT_FOUND: 'Cidade não encontrada.',
+        PROPERTY_NOT_FOUND: 'Propriedade não encontrada.',
+        SPOT_NOT_FOUND: 'Vaga não encontrada.',
         CPF_ALREADY_EXISTS: 'CPF já cadastrado.',
         EMAIL_ALREADY_EXISTS: 'E-mail já cadastrado.',
         STATE_ALREADY_EXISTS: 'Estado já cadastrado.',
         LICENSE_PLATE_ALREADY_EXISTS: 'Já existe um veículo cadastrado com esta placa.',
         VEHICLE_NOT_FOUND: 'Veículo não encontrado.',
         USER_ALREADY_MEMBER: 'Usuário já vinculado à propriedade',
-        SPOT_ALREADY_EXISTS: 'Vaga duplicada na mesma propriedade'
+        SPOT_ALREADY_EXISTS: 'Vaga duplicada na mesma propriedade',
+        EXTERNAL_API_FAILURE: 'Erro no cep.'
     };
 
     const message = messageMap[err.message] ?? (status === 500 ? 'Erro interno do servidor' : err.message);

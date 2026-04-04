@@ -21,6 +21,7 @@ module.exports = {
     const { data: ufs } = await api.get("/estados?orderBy=nome");
 
     const statesToInsert = ufs.map((uf) => ({
+      EST_INT_ID: uf.id,
       EST_STR_NOME: uf.nome,
       EST_STR_UF: uf.sigla,
     }));
@@ -49,6 +50,7 @@ module.exports = {
         if (!ufSigla || !stateId) return null;
 
         return {
+          CID_INT_ID: city.id,
           CID_STR_NOME: city.nome,
           EST_INT_ID: stateId,
         };

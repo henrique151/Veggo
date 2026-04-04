@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("propertys", {
+    await queryInterface.createTable("properties", {
       PRO_INT_ID: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -20,7 +20,7 @@ module.exports = {
       },
       PRO_STR_DESCRICAO: {
         type: Sequelize.STRING(100),
-        allowNull: false,
+        allowNull: true,
       },
       PRO_BOL_ATIVA: {
         type: Sequelize.BOOLEAN,
@@ -38,6 +38,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.dropTable({ tableName: "propertys" });
+    await queryInterface.dropTable({ tableName: "properties" });
   },
 };

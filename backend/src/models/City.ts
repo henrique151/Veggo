@@ -13,7 +13,7 @@ class City extends Model<CityAttributes, CityCreationAttributes> implements City
 City.init({
     id: {
         type: DataTypes.INTEGER,
-        autoIncrement: true,
+        autoIncrement: false,
         primaryKey: true,
         allowNull: false,
         field: 'CID_INT_ID'

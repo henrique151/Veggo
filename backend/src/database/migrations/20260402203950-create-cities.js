@@ -6,17 +6,17 @@ module.exports = {
     await queryInterface.createTable("cities", {
       CID_INT_ID: {
         type: Sequelize.INTEGER,
-        autoIncrement: true,
+        autoIncrement: false,
         primaryKey: true,
-        allowNull: true,
+        allowNull: false,
       },
       CID_STR_NOME: {
         type: Sequelize.STRING(100),
-        allowNull: true,
+        allowNull: false,
       },
       EST_INT_ID: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
       },
     });
     await queryInterface.addIndex("cities", ["CID_STR_NOME"], {

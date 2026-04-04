@@ -33,7 +33,7 @@ Property.init({
     },
     description: {
         type: DataTypes.STRING(100),
-        allowNull: false,
+        allowNull: true,
         field: 'PRO_STR_DESCRICAO'
     },
     isActive: {
@@ -53,7 +53,7 @@ Property.init({
     }
 }, {
     sequelize,
-    tableName: 'propertys',
+    tableName: 'properties',
     timestamps: false
 });
 

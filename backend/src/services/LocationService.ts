@@ -3,17 +3,17 @@ import City from "../models/City";
 
 export class LocationService {
     static async getStates() {
-        return State.findAll({ order: [['EST_STR_NOME', 'ASC']] });
+        return State.findAll({
+            attributes: [['EST_INT_ID', 'id'], ['EST_STR_NOME', 'name'], ['EST_STR_UF', 'uf']],
+            order: [['EST_INT_ID', 'ASC']]
+        });
     }
 
     static async getCitiesByState(stateId: number) {
-        const state = await State.findByPk(stateId);
-        if (!state) throw new Error('STATE_NOT_FOUND');
-
         return City.findAll({
             where: { stateId },
-            order: [['name', 'ASC']],
-            attributes: { exclude: ['EST_INT_ID'] },
+            attributes: [['CID_INT_ID', 'id'], ['CID_STR_NOME', 'name']],
+            order: [['CID_STR_NOME', 'ASC']],
         });
     }
-} 
+}

@@ -19,6 +19,19 @@ module.exports = {
         allowNull: false,
         defaultValue: "DISPONIVEL",
       },
+      VAG_STR_STATUS_APROVACAO: {
+        type: Sequelize.ENUM("PENDENTE", "APROVADA", "RECUSADA"),
+        allowNull: false,
+        defaultValue: "PENDENTE",
+      },
+      VAG_JSN_VEICULOS_PERMITIDOS: {
+        type: Sequelize.JSON,
+        allowNull: true,
+      },
+      VAG_JSN_HORARIOS_FUNCIONAMENTO: {
+        type: Sequelize.JSON,
+        allowNull: true,
+      },
       VAG_STR_IDENTIFICADOR: {
         type: Sequelize.STRING(70),
         allowNull: false,

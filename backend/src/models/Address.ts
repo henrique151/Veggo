@@ -8,6 +8,7 @@ class Address extends Model<AddressAttributes, AddressCreationAttributes> implem
     public id!: number;
     public street!: string;
     public neighborhood!: string;
+    public complement!: string;
     public zipCode!: string;
     public cityId!: number;
     public number!: string;
@@ -34,6 +35,11 @@ Address.init({
         type: DataTypes.STRING(20),
         allowNull: false,
         field: "END_STR_NUMERO"
+    },
+    complement: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        field: 'END_STR_COMPLEMENTO'
     },
     zipCode: {
         type: DataTypes.CHAR(8),

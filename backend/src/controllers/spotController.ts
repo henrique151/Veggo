@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { SpotService } from '../services/SpotService';
-import { GenerateSpotsInput } from '../schemas/sportsSchema';
+import { evaluateSpotSchema, GenerateSpotsInput } from '../schemas/sportsSchema';
 
 export const generateSports = asyncHandler(async (req: Request, res: Response) => {
     const propId = Number(req.params.propId);
@@ -9,11 +9,15 @@ export const generateSports = asyncHandler(async (req: Request, res: Response) =
 
     const data = await SpotService.generateSpots(propId, spotData);
 
-    res.status(201).json({
-        success: true,
-        message: `${spotData.count} vagas geradas com sucesso`,
-        data
-    });
+    res.status(201).json({ success: true, message: 'Vagas geradas e aguardando aprovação', data });
+});
+
+export const evaluateSpots = asyncHandler(async (req: Request, res: Response) => {
+    const validatedData = evaluateSpotSchema.parse(req.body);
+    const spotId = Number(req.params.id);
+    const result = await SpotService.evaluateSpot(spotId, validatedData.approvalStatus);
+
+    res.status(200).json({ success: true, data: result });
 });
 
 export const listByProperty = asyncHandler(async (req: Request, res: Response) => {
@@ -22,9 +26,8 @@ export const listByProperty = asyncHandler(async (req: Request, res: Response) =
     res.status(200).json({ success: true, data });
 });
 
-export const patchStatus = asyncHandler(async (req: Request, res: Response) => {
+export const updateSpot = asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);
-    const { status } = req.body;
-    const data = await SpotService.updateStatusProperty(id, status);
-    res.status(200).json({ success: true, message: 'Status da vaga atualizado', data });
+    const data = await SpotService.updateSpot(id, req.body);
+    res.status(200).json({ success: true, message: 'Dados da vaga atualizados', data });
 });

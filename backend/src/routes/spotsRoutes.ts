@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { generateSports, listByProperty, patchStatus } from '../controllers/spotController';
+import { generateSports, listByProperty, evaluateSpots, updateSpot } from '../controllers/spotController';
 import { validateBody } from "../middlewares/validateBody";
-import { generateSpotsSchema, updateSpotStatusSchema } from '../schemas/sportsSchema';
+import { evaluateSpotSchema, generateSpotsSchema, updateSpotStatusSchema } from '../schemas/sportsSchema';
 import { authMiddleware } from "../middlewares/authMiddleware";
 
 const router = Router();
@@ -20,10 +20,17 @@ router.get(
 );
 
 router.patch(
+    '/:id/evaluate',
+    authMiddleware,
+    validateBody(evaluateSpotSchema),
+    evaluateSpots
+);
+
+router.patch(
     '/:id/status',
     authMiddleware,
     validateBody(updateSpotStatusSchema),
-    patchStatus
+    updateSpot
 );
 
 export default router;

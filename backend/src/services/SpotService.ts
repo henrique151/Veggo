@@ -13,8 +13,11 @@ export class SpotService {
             for (let i = 1; i <= spotData.count; i++) {
                 spots.push({
                     size: spotData.size,
-                    status: 'DISPONIVEL',
+                    status: 'INDISPONIVEL',
+                    approvalStatus: 'PENDENTE',
                     identifier: `${spotData.prefix}${i}`,
+                    allowedVehicles: spotData.allowedVehicles || ['CARRO'],
+                    operatingHours: spotData.operatingHours || {},
                     isCovered: spotData.isCovered,
                     isActive: true,
                     propertyId: propId
@@ -30,15 +33,32 @@ export class SpotService {
         }
     }
 
-    static async getByProperty(propId: number) {
-        return Spot.findAll({ where: { propertyId: propId, isActive: true } });
-    }
-
-    static async updateStatusProperty(spotId: number, status: any) {
+    static async evaluateSpot(spotId: number, status: 'APROVADA' | 'RECUSADA' | 'SUSPENSA') {
         const spot = await Spot.findByPk(spotId);
         if (!spot) throw new Error('SPOT_NOT_FOUND');
 
-        await spot.update({ status });
+        const operationalStatus = status === 'APROVADA' ? 'DISPONIVEL' : 'INDISPONIVEL';
+
+        await spot.update({
+            approvalStatus: status as any,
+            status: operationalStatus
+        });
         return spot;
+    }
+
+    static async updateSpot(spotId: number, updateData: any) {
+        const spot = await Spot.findByPk(spotId);
+        if (!spot) throw new Error('SPOT_NOT_FOUND');
+
+        await spot.update(updateData);
+        return spot;
+    }
+
+    static async getByProperty(propId: number) {
+        return Spot.findAll({
+            where: { propertyId: propId, isActive: true },
+            attributes: { exclude: ['PRO_INT_ID'] },
+            order: [['id', 'ASC']],
+        });
     }
 }

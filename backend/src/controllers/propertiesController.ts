@@ -2,17 +2,21 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { PropertyService } from '../services/PropertyService';
 import { CreatePropertyInput } from "../schemas/propertiesSchema";
+import { AuthRequest } from "../middlewares/authMiddleware";
 
 export const createProperty = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthRequest;
+    const userId = Number(authReq.user?.id);
     const data = req.body as CreatePropertyInput;
-    const result = await PropertyService.createProperty(data);
+
+    const result = await PropertyService.createProperty(data, userId);
 
     res.status(201).json({
         success: true,
         message: 'Propriedade e endereço cadastrados com sucesso',
         data: result
     });
-})
+});
 
 export const getAllProperties = asyncHandler(async (req: Request, res: Response) => {
     const data = await PropertyService.getAllProperties();
@@ -20,17 +24,26 @@ export const getAllProperties = asyncHandler(async (req: Request, res: Response)
 })
 
 export const getPropertyById = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthRequest;
     const id = Number(req.params.id);
-    const data = await PropertyService.getPropertyById(id);
+    const userId = Number(authReq.user?.id);
+
+    const data = await PropertyService.getPropertyById(id, userId);
     res.status(200).json({ success: true, data });
 })
+
+export const getMyProperties = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthRequest;
+    const userId = Number(authReq.user?.id);
+    const data = await PropertyService.getMyProperties(userId);
+    res.status(200).json({ success: true, data });
+});
 
 export const deleteProperty = asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     await PropertyService.deleteProperty(id);
     res.status(200).json({ success: true, message: 'Propriedade removida' });
 })
-
 
 export const updateProperty = asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);

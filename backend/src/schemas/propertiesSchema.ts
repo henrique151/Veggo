@@ -9,7 +9,6 @@ const RULES = {
     CAPACITY_MIN: 1
 } as const;
 
-
 const propertyNameSchema = z
     .string({ error: 'Nome da propriedade é obrigatório' })
     .min(RULES.NAME_MIN, `Nome deve ter no mínimo ${RULES.NAME_MIN} caracteres`)
@@ -21,7 +20,8 @@ const propertyTypeSchema = z.string({ error: 'Tipo é obrigatório' });
 const descriptionSchema = z
     .string()
     .max(RULES.DESC_MAX, `Descrição não pode exceder ${RULES.DESC_MAX} caracteres`)
-    .trim();
+    .trim()
+    .optional(); 
 
 const capacitySchema = z
     .number({ error: 'Capacidade deve ser um número' })
@@ -34,25 +34,27 @@ const zipCodeSchema = z
     .regex(/^\d+$/, 'CEP deve conter apenas números');
 
 const addressStringSchema = (label: string, max: number) => z
-    .string({ error: `${label} é obrigatório` })
+    .string()
     .min(2, `${label} muito curto`)
     .max(max, `${label} muito longo`)
-    .trim();
+    .trim()
+    .optional(); 
 
 export const createPropertySchema = z.object({
-    // Dados da Propriedade
     name: propertyNameSchema,
     type: propertyTypeSchema,
     description: descriptionSchema,
     totalCapacity: capacitySchema,
     isActive: z.boolean().optional().default(true),
 
-    // Dados do Endereço
+
     street: addressStringSchema('Rua', 70),
-    number: addressStringSchema('Número', 20),
+    number: z.string({ error: 'Número é obrigatório' }).max(20).trim(),
+    complement: z.string().max(100, 'Complemento muito longo').trim().optional(), // ADICIONADO
     neighborhood: addressStringSchema('Bairro', 70),
     zipCode: zipCodeSchema,
-    cityId: z.number({ error: 'ID da cidade é obrigatório' }).positive()
+
+    cityId: z.number().positive().optional()
 }).strict();
 
 export type CreatePropertyInput = z.infer<typeof createPropertySchema>;

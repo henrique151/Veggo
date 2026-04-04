@@ -14,7 +14,7 @@ router.post('/', authMiddleware, validateBody(createVehicleSchema), createVehicl
 
 router.get('/', authMiddleware, getAllVehicles);
 router.get('/my-vehicles', authMiddleware, getMyVehicles);
-router.get('/:userId/:id', authMiddleware, getVehicleById);
+router.get('/:id', authMiddleware, getVehicleById);
 
 router.put('/:id', authMiddleware, validateBody(updateVehicleSchema), updateVehicle);
 router.delete('/:id', authMiddleware, deleteVehicle);

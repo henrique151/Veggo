@@ -10,6 +10,9 @@ class Spot extends Model<SpotAttributes, SpotCreationAttributes> implements Spot
     public status!: 'DISPONIVEL' | 'INDISPONIVEL' | 'OCUPADA';
     public identifier!: string;
     public isCovered!: boolean;
+    public approvalStatus!: 'PENDENTE' | 'APROVADA' | 'RECUSADA';
+    public allowedVehicles!: string;
+    public operatingHours !: string;
     public isActive!: boolean;
     public propertyId!: number;
 }
@@ -40,6 +43,22 @@ Spot.init({
         type: DataTypes.BOOLEAN,
         allowNull: false,
         field: 'VAG_BOL_COBERTA'
+    },
+    approvalStatus: {
+        type: DataTypes.ENUM('PENDENTE', 'APROVADA', 'RECUSADA'),
+        allowNull: false,
+        defaultValue: 'PENDENTE',
+        field: 'VAG_STR_STATUS_APROVACAO'
+    },
+    allowedVehicles: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        field: 'VAG_JSN_VEICULOS_PERMITIDOS'
+    },
+    operatingHours: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        field: 'VAG_JSN_HORARIOS_FUNCIONAMENTO'
     },
     isActive: {
         type: DataTypes.BOOLEAN,

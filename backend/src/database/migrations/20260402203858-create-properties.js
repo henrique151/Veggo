@@ -20,7 +20,7 @@ module.exports = {
       },
       PRO_STR_DESCRICAO: {
         type: Sequelize.STRING(100),
-        allowNull: false,
+        allowNull: true,
       },
       PRO_BOL_ATIVA: {
         type: Sequelize.BOOLEAN,

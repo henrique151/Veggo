@@ -17,6 +17,10 @@ module.exports = {
         type: Sequelize.STRING(20),
         allowNull: false,
       },
+      END_STR_COMPLEMENTO: {
+        type: Sequelize.STRING(100),
+        allowNull: true, 
+      },
       END_STR_BAIRRO: {
         type: Sequelize.STRING(70),
         allowNull: false,
